@@ -90,8 +90,6 @@ This manifest installs the Argo CD components and their required Kubernetes reso
 
 The standard installation includes the components required for the Argo CD UI, API, repository access, and application reconciliation.
 
-**Note:** The `stable` URL follows the current stable release. For reproducible production deployments, pin the installation to a specific Argo CD version.
-
 ## 5. Verify the installation
 
 Check all Argo CD pods:
@@ -132,6 +130,8 @@ In our lab, all seven Argo CD pods reached the Running state with containers Rea
 | argocd-applicationset-controller | Generates and manages applications from ApplicationSet resources |
 | argocd-notifications-controller | Application event notifications |
 
+<img width="1024" height="568" alt="image" src="https://github.com/user-attachments/assets/91a5142a-519b-4932-9118-b3f96617d1ce" />
+
 ## 6. Access the Argo CD web UI
 
 By default, Argo CD's server is not exposed externally through a LoadBalancer or Ingress.
@@ -145,6 +145,7 @@ kubectl port-forward svc/argocd-server \
   -n argocd 8080:443 \
   --address 0.0.0.0
 ```
+<img width="572" height="345" alt="image" src="https://github.com/user-attachments/assets/a60d7ba9-8668-474d-b62b-9f2e23a1b6cc" />
 
 Explanation:
 
@@ -224,67 +225,9 @@ The application directory contains the Kubernetes manifests that Argo CD monitor
 
 File: `apps/nginx-demo/deployment.yaml`
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-
-metadata:
-  name: nginx
-  namespace: nginx-demo
-
-spec:
-  replicas: 2
-
-  selector:
-    matchLabels:
-      app: nginx
-
-  template:
-    metadata:
-      labels:
-        app: nginx
-
-    spec:
-      containers:
-        - name: nginx
-          image: nginx:1.27
-
-          ports:
-            - containerPort: 80
-
-          resources:
-            requests:
-              cpu: 100m
-              memory: 64Mi
-
-            limits:
-              cpu: 500m
-              memory: 128Mi
-```
-
 ### 9.2 Service manifest
 
 File: `apps/nginx-demo/service.yaml`
-
-```yaml
-apiVersion: v1
-kind: Service
-
-metadata:
-  name: nginx
-  namespace: nginx-demo
-
-spec:
-  type: ClusterIP
-
-  selector:
-    app: nginx
-
-  ports:
-    - port: 80
-      targetPort: 80
-      protocol: TCP
-```
 
 The Deployment maintains two Nginx pod replicas.
 
@@ -326,8 +269,7 @@ The application configuration was:
 
 **Auto-create namespace:** Allows Argo CD to create the destination namespace if it does not already exist.
 
-We used the existing `default` AppProject. The attempted custom project name `Portfolio-project` was not present in the cluster.
-
+We used the existing `default` AppProject.
 ## 11. Troubleshooting: Argo CD could not access GitHub
 
 During application creation, we encountered:
@@ -344,6 +286,8 @@ server misbehaving
 ```
 
 This indicated a DNS resolution failure rather than a Git authentication problem.
+<img width="1024" height="582" alt="image" src="https://github.com/user-attachments/assets/773856d8-11af-46d3-9571-d7c8725118e0" />
+
 
 ### 11.1 Check CoreDNS pods
 
@@ -568,7 +512,7 @@ The dashboard showed:
 - The previous external DNS resolution issue no longer prevents this GitOps workflow.
 
 <img width="1016" height="543" alt="image" src="https://github.com/user-attachments/assets/71129e90-6e6e-44ae-b36a-bbda70c71112" />
-<img width="1024" height="568" alt="image" src="https://github.com/user-attachments/assets/91a5142a-519b-4932-9118-b3f96617d1ce" />
+
 <img width="1006" height="222" alt="image" src="https://github.com/user-attachments/assets/ad7c77f8-96ce-4c58-9586-c850cfba2c6f" />
 
 Useful commands:
